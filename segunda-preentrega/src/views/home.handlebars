@@ -1,0 +1,15 @@
+
+    <h1>Bienvenido a la página principal</h1>
+    <h2>Lista de productos</h2>
+    <ul>
+        {{#each productos}}
+        <li>
+            <h3>{{title}}</h3>
+            <p>Precio: ${{price}}</p>
+            <p>Category: {{category}}</p>
+        </li>
+        {{/each}}
+    </ul>
+
+
+
