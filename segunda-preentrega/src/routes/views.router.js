@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { productsModel } from "../models/products.model.js";
-
+import { cartsModel } from "../models/cart.model.js";
 
 
 const viewsRoutes = Router()
@@ -107,7 +107,28 @@ if (req.io) {
   
 })
 
+viewsRoutes.get("/cart/:cid", async (req, res) => {/*
+  try {
+    const { cid } = req.params
+    const cart = await cartsModel.findOne({_id: cid})
+    res.send({status:"success",payload:cart})
+    res.render('cartDetail',{ cart })
+  } catch (error) {
+    console.log(error); 
+  }*/try {
+    const { cid } = req.params
+    const cart = await cartsModel.findOne({_id: cid}).populate("products");
 
+    if (!cart) {
+      return res.status(404).send('Carrito no encontrado');
+    }
+
+    res.render('cartDetail',{cart});
+  } catch (error) {
+      console.error("Error al obtener el carrito:", error);
+      res.status(500).send("Error interno del servidor");
+    }
+  });
 
 export default viewsRoutes;
 

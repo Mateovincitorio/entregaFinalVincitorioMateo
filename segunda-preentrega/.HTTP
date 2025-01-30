@@ -13,7 +13,7 @@ POST http://localhost:8080/api/carts
 
 ###
 
-POST http://localhost:8080/api/carts/add
+POST http://localhost:8080/api/carts/679b49ef74b834bce5cff0ee/products/679a6a94ff5d2bd69a758693
 
 ###
 

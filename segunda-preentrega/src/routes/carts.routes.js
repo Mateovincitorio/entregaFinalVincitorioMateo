@@ -26,55 +26,32 @@ cartRoutes.post("/", async (req, res) => {
 
 cartRoutes.post("/add", async (req, res) => {
   try {
-    // Obtener el productId del cuerpo de la solicitud
     const { productId } = req.body;
     console.log("Product ID recibido:", productId);
-    // Verificar si el productId es válido
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       console.error("ID de producto inválido:", productId);
       return res.status(400).json({ error: "ID de producto inválido" });
   }
-
-    // Buscar un carrito existente (si existe)
     let cart = await cartsModel.findOne();
     
-    // Si no existe, crear uno nuevo
     if (!cart) {
         cart = new cartsModel({ products: [] });
         await cart.save();
     }
-
-    // Verificar si el producto ya está en el carrito
     const existingProduct = cart.products.find(p => p.product.toString() === productId);
 
     if (existingProduct) {
-        // Si el producto ya está en el carrito, aumentar la cantidad
         existingProduct.quantity += 1;
     } else {
-        // Si no está, agregarlo al carrito
         cart.products.push({ product: new mongoose.Types.ObjectId(productId), quantity: 1 });
     }
 
-    // Guardar los cambios en el carrito
     await cart.save();
-
-    // Enviar respuesta al cliente
     res.status(200).json({ message: "Producto agregado al carrito", cart });
 } catch (error) {
     console.error("Error al agregar al carrito:", error);
     res.status(500).json({ error: "Error interno del servidor" });
 }
-});
-
-
-cartRoutes.get("/:cid", async (req, res) => {
-  try {
-    const { cid } = req.params
-    const cart = await cartsModel.findOne({_id: cid})
-    res.send({status:"success",payload:cart})
-  } catch (error) {
-    console.log(error); 
-  }
 });
 
 cartRoutes.delete('/:cid',async (req,res) => {
@@ -147,6 +124,51 @@ res.send({ message: "Cantidad actualizada correctamente" });
   }
 })
 
+cartRoutes.put('/api/carts/:cid',async (req, res)=>{ //el codigo de este PUT esta hardcodeado, por lo qiue entendi en la consigna, debia ser asi!!!
+  try {
+    const { cid } = req.params;
+    const newProducts = req.body;
+    const cart = await cartsModel.findById(cid);
+    if(!cart){
+      res.status('404').json({message:"carrito no encontrado"})
+    }
+    const productIds= newProducts.map(p=>p.productId);
+    const existingProducts = await Product.find({ _id: { $in: productIds } });
+    
+    if (existingProducts.length !== productIds.length) {
+      return res.status(400).json({ status: 'error', message: 'Uno o más productos no existen' });
+    }
+    cart.products = newProducts;
+    await cart.save();
+    res.json({
+      "status": "success",
+    "payload": {
+        "_id": "679ba55a7d4d8a2a6d47a32e",
+        "products": [
+            {
+                "productId": "679a6a94ff5d2bd69a758693",
+                "quantity": 3
+            },
+            {
+                "productId": "679b5431332386f7f4cdc151",
+                "quantity": 2
+            }
+        ]
+    },
+    "totalPages": 1,
+    "prevPage": null,
+    "nextPage": null,
+    "page": 1,
+    "hasPrevPage": false,
+    "hasNextPage": false,
+    "prevLink": null,
+    "nextLink": null
+    })
+  } catch (error) {
+    console.log(error);
+  }
+  
+})
 
 
 export default cartRoutes;

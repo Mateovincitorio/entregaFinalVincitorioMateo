@@ -27,7 +27,6 @@ const runtimeOptions = {
 app.use(express.static('public'))
 app.use('/api/products', productsRoutes);
 app.use('/api/carts', cartRoutes);
-app.set('views','src/views')
 app.use('/',viewsRoutes);
 
 const connectDb = () =>{
