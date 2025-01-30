@@ -1,105 +1,71 @@
 import { Router } from "express";
-import fs from "fs";
-import { title } from "process";
+import { productsModel } from "../models/products.model.js";
+
 
 const productsRoutes = Router();
 
-const getProducts = async () => {
-  try {
-    const products = await fs.promises.readFile(
-      "src/db/productos.json",
-      "utf-8"
-    );
-    const productsJson = JSON.parse(products);
-    return productsJson;
-  } catch (error) {
-    return [];
-  }
-};
 
-const saveProducts = async (products) => {
+productsRoutes.get("/", async (req, res) => {
+  const { numPage = 1, limit = 10 } = req.query;
   try {
-    const parsedProducts = JSON.stringify(products);
-    await fs.promises.writeFile(
-      "src/db/productos.json",
-      parsedProducts,
-      "utf-8"
-    );
-    return true;
+    const {
+      docs,
+      page,
+      totalPages,
+      hasPrevPage,
+      hasNextPage,
+      prevPage, 
+      nextPage,
+      prevLink,
+      nextLink
+    } = await productsModel.paginate({},{limit, numPage})
+    res.send({
+      status:'success',
+      payload: docs,
+      page,
+      totalPages,
+      hasPrevPage,
+      hasNextPage,
+      hasPrevPage,
+      prevPage,
+      nextPage,
+      prevLink: hasPrevPage?`/productos?page=${prevPage}&limit=${limit}`:null,
+      nextLink: hasNextPage?`/productos?page=${nextPage}&limit=${limit}`:null
+    })
   } catch (error) {
-    return false;
+    console.log(error);
   }
-};
-
-const getSingleProduct = async (id) => {
-  const products = await getProducts();
-  const find = products.find((p) => p.id === id);
-  return find;
-};
+});
 
 productsRoutes.post("/", async (req, res) => {
-    const product = req.body;
-    product.id = Date.now();
-  const id = product.id;
-  const titulo = product.title
-  
-  if (
-    !titulo ||
-    !product.description ||
-    !product.code ||
-    !product.price ||
-    product.status !== true ||
-    !product.stock ||
-    !product.category
-  ) {
-      return res
-      .status(400)
-      .send({ status: "Error", message: "complete bien el form" });
-    }
-
-    if (product.thumbnails &&(!Array.isArray(product.thumbnails) || !product.thumbnails.every((thumb) => typeof thumb === "string"))
-    ) {
-      return res
-        .status(400)
-        .send({ status: "Error", message: "El campo thumbnails no es válido" });
-    }
-  
-    // Si thumbnails no está presente, inicializarlo como un array vacío
-    if (!product.thumbnails) {
-      product.thumbnails = [];
-    }
-    
-    const products = await getProducts();
-    
-    
-    
-  const isOk = saveProducts(products);
-  if (!isOk) {
-    return res.send({ status: "Error", message: "producto no añadido" });
+  try {
+    const result = await productsModel.create({
+      "title":"prod1",
+      "description":"prod1",
+      "code":1,
+      "price":1,
+      "status":true,
+      "stock":2,
+      "category":"productos"
+     })
+    res.send(result)
+  } catch (error) {
+    console.log(error);
   }
-  res.send({ status: "OK", message: "producto añadido" });
 });
 
 
 
 productsRoutes.delete("/:pid", async (req, res) => {
-  const id = parseInt(req.params.pid);
-  const product = await getSingleProduct(id);
-  if (!product) {
-    return res
-      .statusCode(404)
-      .send({ status: "Error", message: "producto no encontrado" });
-  }
-  const products = await getProducts();
-  const filterProducts = products.filter((p) => p.id !== id);
-  const isOk = await saveProducts(filterProducts);
-  if (!isOk) {
-    return res.status(400).send({ status: "Error", message: "algo salio mal" });
-  }
-  res.send({ status: "OK", message: "producto eliminado" });
+  const pid = req.params.pid;
+  const result = await productsModel.deleteOne({_id: pid})
+  res.send(result)
 });
 
-productsRoutes.put("/:id", async (req, res) => {
+
+
+
+/*productsRoutes.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const productToUpdate = req.body;
   const listaProd = await getProducts();
@@ -148,25 +114,17 @@ productsRoutes.put("/:id", async (req, res) => {
     return res.status(400).send({ status: "Error", message: "algo salio mal" });
   }
   res.send({ status: "OK", message: "producto actualizado" });
-});
+});*/
 
-productsRoutes.get("/:pid", async (req, res) => {
+/*productsRoutes.get("/:pid", async (req, res) => {
   const id = parseInt(req.params.pid);
   const product = await getSingleProduct(id);
   if (!product) {
     return res.status(404).send("no se encuentra");
   }
   res.send(product);
-});
+});*/
 
-productsRoutes.get("/", async (req, res) => {
-  const limit = parseInt(req.query.limit);
-  const products = await getProducts();
-  if (isNaN(limit) || !limit) {
-    return res.send(products);
-  }
-  const limitacion = products.slice(0, Number(limit));
-  res.send({ limitacion });
-});
+
 
 export default productsRoutes;

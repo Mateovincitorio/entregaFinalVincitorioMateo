@@ -1,15 +1,30 @@
 
     <h1>Bienvenido a la página principal</h1>
     <h2>Lista de productos</h2>
+    <div class="center">
     <ul>
-        {{#each productos}}
+
+    {{#each products}}
         <li>
-            <h3>{{title}}</h3>
-            <p>Precio: ${{price}}</p>
-            <p>Category: {{category}}</p>
+            <strong>Producto: </strong>{{this.title}}
+            <strong>Precio: </strong>{{this.price}}
+            <strong>Categoria: </strong>{{this.category}}
+            <strong>Descripción: </strong> {{this.description}}
+            <button class="add-to-cart" data-product-id="{{this._id}}">Agregar al carrito</button>
+            <hr>
         </li>
-        {{/each}}
+    {{/each}}
+    <div>
+        {{#if hasPrevPage}}
+        <a href="products?numPage={{prevPage}}">Anterior</a>
+        {{/if}}
+        <label>{{page}}</label>
+        {{#if hasNextPage}}
+           <a href="/products?numPage={{nextPage}}">Siguiente</a>
+        {{/if}}
+    </div>
     </ul>
+</div>
 
 
 

@@ -1,0 +1,46 @@
+###____________________Carts___________
+
+
+GET http://localhost:8080/api/carts
+
+###
+
+GET http://localhost:8080/api/carts/679a74f227e6108d23ff3250
+
+###
+
+POST http://localhost:8080/api/carts
+
+###
+
+POST http://localhost:8080/api/carts/add
+
+###
+
+DELETE http://localhost:8080/api/carts/679a7e5bde06f5252b2f9ed8
+
+###
+
+DELETE http://localhost:8080/api/carts/6793d2f842ded3f563ff1849/products/67928c022dce68b974c3b0ff
+
+###
+
+PUT http://localhost:8080/api/carts/679a0e05bc2f1d4f8017face/products/6798f63941d580cb6823bb1a
+Content-Type: application/json
+
+{
+    "quantity":5
+}
+
+
+###____________________products___________
+
+GET http://localhost:8080/api/products
+
+###
+
+POST http://localhost:8080/api/products
+
+###
+
+DELETE  http://localhost:8080/api/products/67913ca97f0275afe4a4b399
