@@ -3,7 +3,7 @@
      
     <h1>Bienvenido a la página principal</h1>
     <h2>Lista de productos</h2>
-    <div>
+    <div class="cartDiv">
     <ul>
     {{#each products}}
         <li>
@@ -29,11 +29,47 @@
 
 
 <style>
+    
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body{
+        background: #0000009f;
+    }
+
+    h1,h2{
+        margin-top: 100px;
+        text-align: center;
+        color: black
+    }
+
+    li{
+        list-style: none;
+        text-decoration: none;
+    }
+
+    
+
+    .cartDiv{
+        position: relative;
+        left: 25%;
+        margin-top: 10%;
+        padding: 40px;
+        width: 50%;
+        height: auto;
+        border-radius: 20px;
+        border: 2px solid black;
+    }
+
     button{
         float: right;
     }
 
     .page {
+    margin-top: 25px;
     width: 100%;
     text-align: center;
     }
