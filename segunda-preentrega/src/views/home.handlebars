@@ -1,11 +1,10 @@
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="./home.css">
      
     <h1>Bienvenido a la página principal</h1>
     <h2>Lista de productos</h2>
-    <div class="center">
+    <div>
     <ul>
-
     {{#each products}}
         <li>
             <strong>Producto: </strong>{{this.title}}
@@ -16,7 +15,7 @@
             <hr>
         </li>
     {{/each}}
-    <div>
+    <div class="page">
         {{#if hasPrevPage}}
         <a href="products?numPage={{prevPage}}">Anterior</a>
         {{/if}}
@@ -27,6 +26,19 @@
     </div>
     </ul>
 </div>
+
+
+<style>
+    button{
+        float: right;
+    }
+
+    .page {
+    width: 100%;
+    text-align: center;
+    }
+
+</style>
 <script src='/socket.io/socket.io.js'></script>
 <script src="/cart.js"></script>
 
