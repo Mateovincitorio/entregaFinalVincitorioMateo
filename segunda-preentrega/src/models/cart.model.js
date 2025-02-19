@@ -9,11 +9,14 @@ const cartSchema = new Schema({
             required: true
         },
         quantity: { type: Number, required: true, default: 1 }
-    }]
+    }],
+    default:[]
 })
 
 cartSchema.pre(/^find/, function () {
     this.populate('products.product');
   });
 
-export const cartsModel = model('carts',cartSchema)
+const cartsModel = model('carts',cartSchema)
+
+export default cartsModel;

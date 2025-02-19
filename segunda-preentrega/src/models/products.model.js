@@ -16,14 +16,15 @@ const productSchema = new Schema({
     code:{
         type: Number,
         require: true,
+        unique:true
     },
     price:{
         type: Number,
         require: true,
     },
     status:{
-        type: String,
-        require: true,
+        type: Boolean,
+        default: true,
     },
     stock:{
         type: Number,
@@ -32,6 +33,10 @@ const productSchema = new Schema({
     category:{
         type: String,
         require: true,
+        index:true
+    },
+    thumbnail:{
+        default:[]
     }
 })
 

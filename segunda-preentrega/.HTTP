@@ -44,3 +44,13 @@ POST http://localhost:8080/api/products
 ###
 
 DELETE  http://localhost:8080/api/products/67913ca97f0275afe4a4b399
+
+###________________USERS__________
+
+http://localhost:8080/api/sessions/login
+Content-Type: application/json
+
+{
+    "email":"mateovincitori@gmail.com",
+    "password":"matu"
+}
