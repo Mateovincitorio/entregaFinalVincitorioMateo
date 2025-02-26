@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             text: "agregaste un producto",
             icon: "success"
         });
-      console.log("Botón clickeado");
       e.preventDefault();
       const productId = e.target.getAttribute("data-product-id");
       console.log("Product ID (antes de enviar):", productId);

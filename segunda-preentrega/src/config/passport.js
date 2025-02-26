@@ -3,8 +3,22 @@ import local from 'passport-local'
 import { validatePass, hashPassword } from "../utils/bcrypt.js";
 import userModel from "../models/users.model.js";
 import GithubStrategy from 'passport-github2'
+import jwt from 'passport-jwt'
+import bcrypt from 'bcrypt'
 
 const localStrategy = local.Strategy //definiendo la estrategia a implementar (local)
+
+const JWTStrategy = jwt.Strategy
+const extractJWT = jwt.ExtractJwt
+
+const cookieExtractor = (req)=>{
+    let token = null
+
+    if(req.cookies){
+        token = req.cookies['coderSession']//consulto especificamente estas cookies generadas con JWT
+    }
+    return token
+}
 
 const initializatePassword = () =>{
     passport.use('register',new localStrategy({
@@ -33,25 +47,30 @@ const initializatePassword = () =>{
             }
     }))
 
-    passport.use('login', new localStrategy({
-        usernameField:'email'}, async(username,password,done)=>{
-             try {
-                    /*const { email, password } = req.body;*/
-                    const user = await userModel.findOne({ email:username });
-                    if (!user) {
-                        return res.status(401).send("Usuario o contraseña incorrectos");
-                    }
-            
-                    // Si todo está bien, guardar la sesión
-                    if(validatePass(password,user?.password)){
-                        return done(null, user)
-                    }else{
-                        return done(null, false)//no hubo ningunn error pero no se pudo loguear
-                    };
-                } catch (error) {
-                    done(error)
-                }
-        }))
+    passport.use(
+        "login",
+        new localStrategy(
+          { usernameField: "email" },
+          async (email, password, done) => {
+            try {
+              const user = await userModel.findOne({ email });
+      
+              if (!user) {
+                return done(null, false, { message: "Usuario o contraseña incorrectos" });
+              }
+      
+              const isValid = await bcrypt.compare(password, user.password);
+              if (!isValid) {
+                return done(null, false, { message: "Usuario o contraseña incorrectos" });
+              }
+      
+              return done(null, user);
+            } catch (error) {
+              return done(error);
+            }
+          }
+        )
+      );
 
 
         passport.use('github',new GithubStrategy({
@@ -78,6 +97,21 @@ const initializatePassword = () =>{
                 
             }
         }))
+
+        passport.use('jwt',new JWTStrategy({
+            jwtFromRequest:extractJWT.fromExtractors([cookieExtractor]),
+            secretOrKey:'coder1234'
+        },async(jwt_payload,done)=>{
+            console.log("JWT Payload recibido:", jwt_payload);
+            try {
+                console.log(jwt_payload);
+                return done(null,jwt_payload)
+            } catch (error) {
+                return done(error)
+            }//consulto mi cookie y ya la puedo implementar
+           
+        }))//quiere decir que mi token lo saco de mi cookie extractor
+
         //PASOS NECESARIOS PARA GENERAR UNA SESION Y MANEJARNOS VIA HTTP
 
         passport.serializeUser((user,done)=>{

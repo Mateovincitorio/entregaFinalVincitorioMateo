@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { register,login, githubLogin } from "../controllers/sessions.controller.js";
 import passport from "passport";
+import { authorization } from "../config/authorizate.js";
 
 
 const sessionsRouter= Router()

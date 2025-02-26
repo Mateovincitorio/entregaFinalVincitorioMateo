@@ -14,22 +14,18 @@ import passport from 'passport';
 import initializatePassword from './config/passport.js';
 
 
-
 const app = express();
 const PORT = 8080;
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static('public'))
-app.use('/api/products', productsRoutes);
-app.use('/api/carts', cartsRouter);
 app.use('/',viewsRoutes);
-app.use('/api/users', usersRouter);
+//app.use('/',indexRouter)
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
-app.use("/api/products", viewsRoutes);
 app.use(session({
   store:MongoStore.create({
     mongoUrl:'mongodb+srv://mateovincitorio:matu%402004@codercluster.nt5mm.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=coderCluster',
@@ -39,7 +35,6 @@ app.use(session({
   resave:true,
   saveUninitialized:true
 }))
-app.use('/api/sessions',sessionsRouter)
 
 
 const runtimeOptions = {

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { productsModel } from "../models/products.model.js";
 import cartsModel from "../models/cart.model.js"; 
+import { login } from "../controllers/sessions.controller.js";
+
 
 
 const viewsRoutes = Router()
@@ -129,6 +131,11 @@ viewsRoutes.get("/cart/:cid", async (req, res) => {/*
       res.status(500).send("Error interno del servidor");
     }
   });
+
+viewsRoutes.get('/login', async( req,res )=>{
+  res.render('login')
+})
+
 
 export default viewsRoutes;
 

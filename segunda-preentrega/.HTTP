@@ -1,10 +1,5 @@
 ###____________________Carts___________
 
-
-GET http://localhost:8080/api/carts
-
-###
-
 GET http://localhost:8080/api/carts/679a74f227e6108d23ff3250
 
 ###
@@ -13,7 +8,8 @@ POST http://localhost:8080/api/carts
 
 ###
 
-POST http://localhost:8080/api/carts/679b49ef74b834bce5cff0ee/products/679a6a94ff5d2bd69a758693
+POST http://localhost:8080/api/carts/67bf62b21d23d6aadd237d27
+/products/67b73ec069c2b3978b92dcd7
 
 ###
 
