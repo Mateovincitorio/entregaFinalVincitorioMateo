@@ -109,28 +109,22 @@ if (req.io) {
   
 })
 
-viewsRoutes.get("/cart/:cid", async (req, res) => {/*
+viewsRoutes.get("/cart/:cid", async (req, res) => {
   try {
-    const { cid } = req.params
-    const cart = await cartsModel.findOne({_id: cid})
-    res.send({status:"success",payload:cart})
-    res.render('cartDetail',{ cart })
-  } catch (error) {
-    console.log(error); 
-  }*/try {
-    const { cid } = req.params
+    const { cid } = req.params;
     const cart = await cartsModel.findOne({_id: cid}).populate("products");
 
     if (!cart) {
       return res.status(404).send('Carrito no encontrado');
     }
 
-    res.render('cartDetail',{cart});
+    res.render('cartDetail', { cart });
   } catch (error) {
-      console.error("Error al obtener el carrito:", error);
-      res.status(500).send("Error interno del servidor");
-    }
-  });
+    console.error("Error al obtener el carrito:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
+
 
 viewsRoutes.get('/login', async( req,res )=>{
   res.render('login')

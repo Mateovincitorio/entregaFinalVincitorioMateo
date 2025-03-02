@@ -59,3 +59,11 @@ export const githubLogin = (req,res)=>{
         res.status(500).send(e)
     }
 }
+
+export const viewRegister = (req,res) =>{
+    res.render('templates/register',{
+        title:"Registro de usuarios",
+        url_js:'/public/register.js',
+        url_css:'/public/main.css'
+    })
+}

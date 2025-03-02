@@ -5,10 +5,10 @@ import passport from "passport";
 
 const cartsRouter = Router()
 
-cartsRouter.get('/:cid', passport.authenticate('jwt'), authorization("usuario"), getCart)
-cartsRouter.post('/', passport.authenticate('jwt'), authorization("usuario"), createCart)
-cartsRouter.post('/:cid/products/:pid', passport.authenticate('jwt'), authorization("usuario"), insertProductCart )
-cartsRouter.delete('/:cid', passport.authenticate('jwt'), authorization("usuario"), deleteCart)
-cartsRouter.delete('/:cid/products/:pid', passport.authenticate('jwt'), authorization("usuario"),  deleteProductCart)
+cartsRouter.get('/:cid', passport.authenticate('jwt'), authorization("Usuario"), getCart)
+cartsRouter.post('/', passport.authenticate('jwt'), authorization("Usuario"), createCart)
+cartsRouter.post('/:cid/products/:pid', passport.authenticate('jwt'), authorization("Usuario"), insertProductCart )
+cartsRouter.delete('/:cid', passport.authenticate('jwt'), authorization("Usuario"), deleteCart)
+cartsRouter.delete('/:cid/products/:pid', passport.authenticate('jwt'), authorization("Usuario"),  deleteProductCart)
 
 export default cartsRouter

@@ -12,11 +12,16 @@ const JWTStrategy = jwt.Strategy
 const extractJWT = jwt.ExtractJwt
 
 const cookieExtractor = (req)=>{
+    console.log("cookies recibidas",req.cookies);
     let token = null
-
-    if(req.cookies){
+    
+    if(req && req.cookies){
         token = req.cookies['coderSession']//consulto especificamente estas cookies generadas con JWT
+        console.log("token extraido", token);
+    }else{
+        console.log("No se encontraron cookies en la solicitud.");
     }
+    console.log(token);
     return token
 }
 
