@@ -61,7 +61,7 @@ app.use('/api/sessions', sessionsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/products', productsRoutes);
 app.use('*',(req,res)=>{
-    res.status(404).send("Not found")
+    res.status(404).send("ruta no encontrada")
 })
 
 
