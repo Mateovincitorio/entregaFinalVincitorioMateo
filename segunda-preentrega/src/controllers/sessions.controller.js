@@ -54,9 +54,9 @@ export const githubLogin = (req,res)=>{
                 secure:false, //evita errores en https
                 maxAge:8640000 //un dia en segundos
             }
-        ).send('usuario logueado correctamente')
+        ).redirect('/api/products')
     } catch (error) {
-        res.status(500).send(e)
+        res.status(500).json({message:e})
     }
 }
 
