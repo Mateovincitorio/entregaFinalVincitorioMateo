@@ -32,12 +32,12 @@ export const login = async (req, res) => {
 export const register = async(req,res)=>{
     try{
         if(!req.user)
-            return res.status(400).send('email y contraseña son obligarorios')
+            return res.status(400).json({message:'email y contraseña son obligarorios'})
 
-        return res.status(200).send('usuario registrado correctamente')
+        return res.status(200).json({message:'usuario registrado correctamente'})
         
     }catch(error){
-        console.log(error);
+       res.status(500).json({message: error})
     }
 }
 
