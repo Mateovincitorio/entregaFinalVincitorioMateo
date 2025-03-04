@@ -5,7 +5,7 @@ import { generateToken } from '../utils/jwt.js';
 export const login = async (req, res) => {
     try {
         if(!req.user)
-            return res.status(400).send('usuario o contraseña no valida')
+            return res.status(400).json({message:'usuario o contraseña no valida'})
 //sesion de BDD
         req.session.user = {
             email: req.user.email,
@@ -20,11 +20,11 @@ export const login = async (req, res) => {
                 secure:false, //evita errores en https
                 maxAge:8640000 //un dia en segundos
             }
-        ).send('usuario logueado correctamente')
+        ).json({message:'usuario logueado correctamente'})
 
     } catch (error) {
         console.error("Error en el login:", error);
-        return res.status(500).send("Error en el servidor");
+        return res.status(500).json({message:"Error en el servidor"});
     }
 };
 
@@ -64,6 +64,14 @@ export const viewRegister = (req,res) => {
     res.status(200).render('templates/register', {
         title: "Registro de Usuarios",
         url_js: "/js/register.js",
+        url_css: "/css/main.css"
+    })
+}
+
+export const viewLogin = (req,res) => {
+    res.status(200).render('templates/login', {
+        title: "Inicio de Sesion de Usuarios",
+        url_js: "/js/login.js",
         url_css: "/css/main.css"
     })
 }
