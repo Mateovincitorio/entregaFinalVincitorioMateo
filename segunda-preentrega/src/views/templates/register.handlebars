@@ -1,33 +1,33 @@
-<div class="container d-flex justify-content-center align-item-center vh-120">
+<div class="container d-flex justify-content-center align-items-center vh-120">
     <div class="card p-4 shadow-sm cardSession">
-        <h2 class="text-center">Register</h2>
-        <form action="/api/sessions/register" id="registerForm" method="post">
+        <h2 class="text-center">Formulario de Registro</h2>
+        <form action="" id="registerForm" method="post">
             <div class="mb-3">
-                <label class="form-label" for="first_name">First Name</label>
+                <label for="first_name" class="form-label">First Name</label>
                 <input type="text" class="form-control" name="first_name">
             </div>
             <div class="mb-3">
-                <label class="form-label" for="last_name">Last Name</label>
+                <label for="last_name" class="form-label">Last Name</label>
                 <input type="text" class="form-control" name="last_name">
             </div>
             <div class="mb-3">
-                <label class="form-label" for="email">Email</label>
-                <input type="email" class="form-control" name="email">
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="age">Age</label>
+                <label for="age" class="form-label">Age</label>
                 <input type="number" class="form-control" name="age">
             </div>
             <div class="mb-3">
-                <label class="form-label" for="password">Password</label>
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" name="password">
             </div>
-            <button type="submit" class="btn-primary w-100">
+            <button type="submit" class="btn btn-primary w-100">
                 Registrarme
             </button>
         </form>
         <div class="text-center mt-3">
-            <a href="/api/sessions/viewlogin">¿ya estas registrado? Inicie sesion</a>
+            <a href="/api/sessions/viewlogin">¿Ya esta registrado? Inicie Sesion</a>
         </div>
     </div>
 </div>

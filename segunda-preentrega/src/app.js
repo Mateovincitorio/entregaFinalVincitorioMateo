@@ -11,8 +11,10 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import sessionsRouter from './routes/sessions.routs.js';
 import passport from 'passport';
+import { fileURLToPath } from "url";
 import initializatePassword from './config/passport.js';
 import cookieParser from 'cookie-parser';
+import __dirname from './path.js'
 
 const app = express();
 app.use(cookieParser("firmaSecreta"));
@@ -73,10 +75,10 @@ app.engine("handlebars", handlebars.engine({
     defaultLayout: false, // Si no usas un layout principal
     partialsDir: "./src/views/partials" // Define la carpeta de partials
 }));
-
-app.set("view engine", "handlebars");
+app.set('view engine', 'handlebars')
 app.set('views', path.join(__dirname, "views"))
 app.use(express.static(path.join(__dirname, "public")))
+
 
 // Conexión a la base de datos
 const connectDb = () => {

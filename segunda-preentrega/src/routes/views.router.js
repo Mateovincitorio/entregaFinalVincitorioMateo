@@ -29,7 +29,7 @@ viewsRoutes.get('/', async (req, res) => {
       page: parseInt(numPage),
       sort: { price: 1 }
     });
-    res.render('home', {
+    res.render('templates/home', {
       products: docs,
       hasNextPage,
       hasPrevPage,
@@ -49,7 +49,7 @@ viewsRoutes.get('/realtimeproducts', async ( req, res)=>{
     try{
         const productos = await productsModel.find()
         const isEmpty = productos.length === 0
-        res.render('realTimeProducts',{productos,isEmpty})
+        res.render('templates/realTimeProducts',{productos,isEmpty})
    }catch (error) {
        console.error("Error en la ruta /:", error);
        res.status(500).send("Error interno del servidor");
@@ -127,7 +127,7 @@ viewsRoutes.get("/cart/:cid", async (req, res) => {
 
 
 viewsRoutes.get('/login', async( req,res )=>{
-  res.render('login')
+  res.render('templates/login')
 })
 
 

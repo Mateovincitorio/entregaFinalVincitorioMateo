@@ -60,10 +60,10 @@ export const githubLogin = (req,res)=>{
     }
 }
 
-export const viewRegister = (req,res) =>{
-    res.render('templates/register',{
-        title:"Registro de usuarios",
-        url_js:'/public/register.js',
-        url_css:'/public/main.css'
+export const viewRegister = (req,res) => {
+    res.status(200).render('templates/register', {
+        title: "Registro de Usuarios",
+        url_js: "/js/register.js",
+        url_css: "/css/main.css"
     })
 }
