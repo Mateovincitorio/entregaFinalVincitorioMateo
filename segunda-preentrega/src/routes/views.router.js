@@ -127,7 +127,7 @@ viewsRoutes.get("/cart/:cid", async (req, res) => {
 
 
 viewsRoutes.get('/login', async( req,res )=>{
-  res.render('templates/login')
+  res.render('/templates/login')
 })
 
 

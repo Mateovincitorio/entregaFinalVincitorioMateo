@@ -11,19 +11,20 @@ const localStrategy = local.Strategy //definiendo la estrategia a implementar (l
 const JWTStrategy = jwt.Strategy
 const extractJWT = jwt.ExtractJwt
 
-const cookieExtractor = (req)=>{
-    console.log("cookies recibidas",req.cookies);
-    let token = null
+const cookieExtractor = (req) => {
+    console.log("Cookies recibidas:", req.cookies);
     
-    if(req && req.cookies){
-        token = req.cookies['coderSession']//consulto especificamente estas cookies generadas con JWT
-        console.log("token extraido", token);
-    }else{
+    let token = null;
+    if (req && req.cookies) {
+        token = req.cookies['coderSession'];
+        console.log("Token extraído:", token);
+    } else {
         console.log("No se encontraron cookies en la solicitud.");
     }
-    console.log(token);
-    return token
-}
+
+    return token;
+};
+
 
 const initializatePassword = () =>{
     passport.use('register',new localStrategy({
@@ -78,30 +79,46 @@ const initializatePassword = () =>{
       );
 
 
-        passport.use('github',new GithubStrategy({
-            clientID:"Iv23liLtzLI1rf3zJZzj",
-            clientSecret:"b733d01aca1ca232e285f7e4233b4f51a6e06501",
-            callbackUrl:"http://localhost:8080/api/sessions/githubcallback"
-
-        },async(accessToken, refreshToken,profile,done)=>{
-            try {
-                let user = await userModel.findOne({email: profile._json.email})
-
-                if(!user){//si no existe lo creo
-                    user = await userModel.create({
-                        first_name: profile._json.name,
-                        laste_name:"",
-                        email:profile._json.email,
-                        password:hashPassword("coder"),//por defecto
-                        age:18 //por defecto
-                     })
+      passport.use(
+        'github',
+        new GithubStrategy(
+            {
+                clientID: "Iv23liLtzLI1rf3zJZzj",
+                clientSecret: "b733d01aca1ca232e285f7e4233b4f51a6e06501",
+                callbackURL: "http://localhost:8080/api/sessions/githubcallback",
+                scope: ['user:email'] // Asegura que GitHub proporcione el email
+            },
+            async (accessToken, refreshToken, profile, done) => {
+                try {
+                    console.log("Perfil de GitHub recibido:", profile);
+    
+                    let email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
+    
+                    if (!email) {
+                        return done(new Error("GitHub no proporcionó un email"), null);
+                    }
+    
+                    let user = await userModel.findOne({ email });
+    
+                    if (!user) {
+                        user = await userModel.create({
+                            first_name: profile.displayName || "Usuario de GitHub",
+                            last_name: " ",
+                            email,
+                            password: hashPassword("coder"), // Contraseña por defecto
+                            age: 18 // Edad por defecto
+                        });
+                    }
+    
+                    return done(null, user);
+                } catch (error) {
+                    console.error("Error en GitHub OAuth:", error);
+                    return done(error, null);
                 }
-                    done(null,user)//si existe lo logueo
-                
-            } catch (error) {
-                
             }
-        }))
+        )
+    );
+    
 
         passport.use('jwt',new JWTStrategy({
             jwtFromRequest:extractJWT.fromExtractors([cookieExtractor]),
@@ -119,14 +136,25 @@ const initializatePassword = () =>{
 
         //PASOS NECESARIOS PARA GENERAR UNA SESION Y MANEJARNOS VIA HTTP
 
-        passport.serializeUser((user,done)=>{
-            done(null,user._id)
-        })
-
-        passport.deserializeUser(async(id,done)=>{
-            const user = await userModel.findById(id)
-            done(null,user)
-        })
+        passport.serializeUser((user, done) => {
+            if (!user || !user._id) {
+                return done(new Error("Usuario inválido"));
+            }
+            done(null, user._id);
+        });
+        
+        passport.deserializeUser(async (id, done) => {
+            try {
+                const user = await userModel.findById(id);
+                if (!user) {
+                    return done(new Error("Usuario no encontrado"));
+                }
+                done(null, user);
+            } catch (error) {
+                done(error);
+            }
+        });
+        
 }
 
 export default initializatePassword

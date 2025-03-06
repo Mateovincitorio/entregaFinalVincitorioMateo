@@ -1,46 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const formRegister = document.getElementById("registerForm")
+    const formRegister = document.getElementById("registerForm");
 
-    formRegister.addEventListener('submit', async (e)=> {
+    formRegister.addEventListener('submit', async (e) => {
+        console.log("Form enviado");
+
         try {
-            e.preventDefault()
-        
-            const formData = new FormData(formRegister) //Consulto el HTML y lo transformo en un objeto iterator
-            
-            const userData = Object.fromEntries(formData) //Transformo un objeto iterator en un objeto simple
-    
+            e.preventDefault();
+
+            const formData = new FormData(formRegister);
+            const userData = Object.fromEntries(formData);
+
             const response = await fetch('http://localhost:8080/api/sessions/register', {
-                method: "POST", 
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(userData),
-                credentials:"include" //Permitir el trabajo via cookies
-            })
+                credentials: "include"
+            });
 
-            const data = await response.json()
-            if(data?.message === "Usuario registrado correctamente") {
+            const data = await response.json();
+            console.log("Respuesta del servidor:", data);
+
+            const mensajeServidor = data?.message?.toLowerCase().trim();
+            console.log("Mensaje procesado:", mensajeServidor);
+
+            if (mensajeServidor === "usuario registrado correctamente") {
+                console.log("Entró en el IF, ejecutando Toastify...");
+
                 Toastify({
                     text: data.message,
                     duration: 3000,
                     close: true,
-                    gravity: "top", 
-                    position: "right", 
-                    stopOnFocus: true,  
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
                     style: {
-                      background: "linear-gradient(to right, #00b09b, #96c93d)",
-                    },
-                    onClick: function(){} 
-                  }).showToast();
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    }
+                }).showToast();
+
                 setTimeout(() => {
-                    window.location.href = "http://localhost:8080/api/sessions/viewlogin"
+                    console.log("Redirigiendo a login...");
+                    window.location.href = "http://localhost:8080/api/sessions/viewlogin";
                 }, 3000);
-                
             } else {
-                console.log(data);
+                console.log("NO se cumplió la condición del mensaje.");
             }
         } catch (e) {
-            console.log(e);
+            console.log("Error en el fetch:", e);
         }
-    })
-})
+    });
+});
