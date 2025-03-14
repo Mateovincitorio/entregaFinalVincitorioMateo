@@ -1,9 +1,10 @@
 import express from 'express';
 import path from 'path';
+import dotenv from 'dotenv'; // Importa dotenv
 import productsRoutes from './routes/products.routes.js';
 import cartsRouter from './routes/carts.routes.js';
 import { Server } from 'socket.io';
-import { create } from 'express-handlebars'//Asi importamos handlebars
+import { create } from 'express-handlebars';
 import viewsRoutes from './routes/views.router.js';
 import mongoose from 'mongoose';
 import usersRouter from './routes/users.routes.js';
@@ -13,17 +14,20 @@ import sessionsRouter from './routes/sessions.routs.js';
 import passport from 'passport';
 import initializatePassword from './config/passport.js';
 import cookieParser from 'cookie-parser';
-import __dirname from './path.js'
+import __dirname from './path.js';
+
+// Cargar variables de entorno
+dotenv.config();
 
 const app = express();
-app.use(cookieParser("firmaSecreta"));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
-const PORT = 8080;
-const hbs = create()
+const PORT = process.env.PORT;
+const hbs = create();
 
 // Definir el servidor de WebSockets
 const httpServer = app.listen(PORT, () => {
-    console.log(`escuchando en el puerto ${PORT}`);
+    console.log(`Escuchando en el puerto ${PORT}`);
 });
 const io = new Server(httpServer);
 
@@ -34,23 +38,23 @@ app.use(express.urlencoded({ extended: true }));
 // Session Middleware
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://mateovincitorio:matu%402004@codercluster.nt5mm.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=coderCluster',
+        mongoUrl: process.env.MONGO_URI,
         ttl: 60
     }),
-    secret: "sesionSecreta",
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }));
 
-//Junte todos los middlewares. Es mejor tenerlos antes que las rutas, ahora creo que no hay conflicto pero es algo que puede traer problemas por el orden de ejecucion.
 // Inicializar Passport
 initializatePassword();
 app.use(passport.initialize());
 app.use(passport.session());
-app.engine("handlebars", hbs.engine)//Aca cambie la forma de aplicar el engine.
+
+app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
-app.set('views', path.join(__dirname, "views"))
-app.use(express.static(path.join(__dirname, "public")))//Tenias declarado la ruta static public 2 veces, quedate con esta
+app.set('views', path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Socket.IO Middleware
 app.use((req, res, next) => {
@@ -64,16 +68,18 @@ app.use('/api/users', usersRouter);
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/products', productsRoutes);
-app.use('*',(req,res)=>{
-    res.status(404).send("ruta no encontrada")
-})
-
-
+app.use('*', (req, res) => {
+    res.status(404).send("Ruta no encontrada");
+});
 
 // Conexión a la base de datos
-const connectDb = () => {
-    console.log("Base de datos conectada");
-    mongoose.connect('mongodb+srv://mateovincitorio:matu%402004@codercluster.nt5mm.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=coderCluster');
+const connectDb = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log("Base de datos conectada");
+    } catch (error) {
+        console.error("Error al conectar la base de datos", error);
+    }
 };
 connectDb();
 
