@@ -1,6 +1,7 @@
+import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken'
 
-let secretKey = "coder1234"
+dotenv.config();
 
 export const generateToken = (user) => {
     /*
@@ -15,6 +16,6 @@ export const generateToken = (user) => {
     age: user.age,
     email: user.email,
     rol: user.rol
-   }, secretKey, {expiresIn: '24h'})
+   }, process.env.SECRETKEY , {expiresIn: '24h'})
    return token
 } 

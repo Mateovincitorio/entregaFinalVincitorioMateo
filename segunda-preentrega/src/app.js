@@ -18,7 +18,6 @@ import __dirname from './path.js';
 
 // Cargar variables de entorno
 dotenv.config();
-
 const app = express();
 app.use(cookieParser(process.env.COOKIE_SECRET));
 

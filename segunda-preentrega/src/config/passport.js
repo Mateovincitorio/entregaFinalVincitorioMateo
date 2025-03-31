@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import passport from "passport";
 import local from 'passport-local'
 import { validatePass, hashPassword } from "../utils/bcrypt.js";
@@ -6,18 +7,18 @@ import GithubStrategy from 'passport-github2'
 import jwt from 'passport-jwt'
 import bcrypt from 'bcrypt'
 
+dotenv.config();
+
 const localStrategy = local.Strategy //definiendo la estrategia a implementar (local)
 
 const JWTStrategy = jwt.Strategy
 const extractJWT = jwt.ExtractJwt
 
 const cookieExtractor = (req) => {
-    console.log("Cookies recibidas:", req.cookies);
     
     let token = null;
     if (req && req.cookies) {
         token = req.cookies['coderSession'];
-        console.log("Token extraído:", token);
     } else {
         console.log("No se encontraron cookies en la solicitud.");
     }
@@ -122,9 +123,8 @@ const initializatePassword = () =>{
 
         passport.use('jwt',new JWTStrategy({
             jwtFromRequest:extractJWT.fromExtractors([cookieExtractor]),
-            secretOrKey:'coder1234'
+            secretOrKey:process.env.SECRETKEY
         },async(jwt_payload,done)=>{
-            console.log("JWT Payload recibido:", jwt_payload);
             try {
                 console.log(jwt_payload);
                 return done(null,jwt_payload)
