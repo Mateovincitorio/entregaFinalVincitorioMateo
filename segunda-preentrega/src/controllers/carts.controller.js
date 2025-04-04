@@ -95,20 +95,20 @@ export const checkOut = async (req,res) =>{
     try {
         const cartId = req.params.cid;
         const cart = await cartModel.findById(cartId)
-        const prodSinStock = []
-        console.log( prodSinStock );
-        console.log( "cart"+cart );
-        console.log("cartID"+ cartId );
+        const prodSinStock = [];
+        //console.log( "cart  "+cart );
 
         if(cart){
             //verifico que todos los prod tienen stock suficiente
             for(const prod of cart.products){
                 let producto = await productsModel.findById(prod.id_prod)
+                if (!producto) {
+                    return res.status(404).json({ message: `Producto con ID ${prod._id} no encontrado` });
+                }
                 if(producto.stock - prod.quantity < 0){
-                    prodSinStock.push(producto.id)
+                    prodSinStock.push(producto._id)
                 }
             }
-            console.log("prod sin stock" + prodSinStock)
 
             if(prodSinStock.length === 0){
                 let totalAmount = 0
@@ -118,7 +118,7 @@ export const checkOut = async (req,res) =>{
                 for (const prod of cart.products){
                     const producto = await productsModel.findById(prod.id_prod)
                     if(producto){
-                        producto.stock-= prod.quantity
+                        producto.stock -= prod.quantity
                         totalAmount += producto.price * prod.quantity
                         await producto.save()
                     }
@@ -129,26 +129,27 @@ export const checkOut = async (req,res) =>{
                     amount:totalAmount,
                     products:cart.products
                 })
-                console.log(code+" " +purchaser+" " +amount+" " +products);
                 
                 await cartModel.findByIdAndUpdate(cartId,{products:[]})
                 res.status(200).send(newTicket)
             }else{
                 //saco los prod sin stock del carrito
-                prodSinStock.forEach((productId)=>{
-                    let indice = cart.products.findIndex(prod => prod.id == productId)
-                    cart.products.splice(indice,1)
-                })
+                prodSinStock.forEach((productId) => {
+                    let indice = cart.products.findIndex(prod => prod.id == productId);
+                    if (indice !== -1) {
+                        cart.products.splice(indice, 1);
+                    }
+                });
                 await cartModel.findByIdAndUpdate(cartId,{
                     products: cart.products
                 })
                 res.status(400).send(prodSinStock)
             }
         }else{
-            re.status(404).send("carrito no existe")
+            res.status(404).send("carrito no existe")
         }
 
-    } catch (e) {
+    } catch (e) {       
         res.status(500).send(e)
     }
 }
