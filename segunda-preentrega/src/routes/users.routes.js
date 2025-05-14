@@ -2,6 +2,7 @@ import { Router } from "express";
 import { deleteUsers, getUser, getUsers, postUsers, putUser } from "../controllers/users.controller.js";
 import { authorization } from "../config/authorizate.js";
 import passport from "passport";
+
 const usersRouter = Router();
 
 usersRouter.get('/', passport.authenticate('jwt'), authorization("Admin"),getUsers)

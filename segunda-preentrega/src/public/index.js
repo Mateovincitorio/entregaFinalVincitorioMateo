@@ -4,7 +4,7 @@ const socket = io();
 
 
 socket.on('connect', () => {
-    console.log('Conectado al servidor Socket.IO');
+    logger.INFO('Conectado al servidor Socket.IO');
 });
 
 socket.on("updatedProducts", (productos) => {

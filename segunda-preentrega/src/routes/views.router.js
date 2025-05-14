@@ -1,15 +1,12 @@
 import { Router } from "express";
 import { productsModel } from "../models/products.model.js";
-import cartsModel from "../models/cart.model.js"; 
+import cartsModel from "../models/cart.model.js";
 import { login } from "../controllers/sessions.controller.js";
+import logger from "../config/logger.config.js";
 
+const viewsRoutes = Router();
 
-
-const viewsRoutes = Router()
-
-  
-
-viewsRoutes.get('/', async (req, res) => {
+viewsRoutes.get("/", async (req, res) => {
   try {
     const { limit = 10, numPage = 1, categoria } = req.query;
     const filter = {};
@@ -23,13 +20,13 @@ viewsRoutes.get('/', async (req, res) => {
       hasPrevPage,
       hasNextPage,
       prevPage,
-      nextPage
+      nextPage,
     } = await productsModel.paginate(filter, {
-      limit: parseInt(limit), 
+      limit: parseInt(limit),
       page: parseInt(numPage),
-      sort: { price: 1 }
+      sort: { price: 1 },
     });
-    res.render('templates/home', {
+    res.render("templates/home", {
       products: docs,
       hasNextPage,
       hasPrevPage,
@@ -37,29 +34,29 @@ viewsRoutes.get('/', async (req, res) => {
       nextPage,
       page,
       totalPages,
-      categoria 
+      categoria,
     });
   } catch (error) {
-    console.error("Error en la ruta /:", error);
+    logger.ERROR("Error en la ruta /:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
 
-viewsRoutes.get('/realtimeproducts', async ( req, res)=>{
-    try{
-        const productos = await productsModel.find()
-        const isEmpty = productos.length === 0
-        res.render('templates/realTimeProducts',{productos,isEmpty})
-   }catch (error) {
-       console.error("Error en la ruta /:", error);
-       res.status(500).send("Error interno del servidor");
-   }
-})
+viewsRoutes.get("/realtimeproducts", async (req, res) => {
+  try {
+    const productos = await productsModel.find();
+    const isEmpty = productos.length === 0;
+    res.render("templates/realTimeProducts", { productos, isEmpty });
+  } catch (error) {
+    logger.ERROR("Error en la ruta /:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
 
-viewsRoutes.post('/agregar', async (req,res)=>{
-  try{
+viewsRoutes.post("/agregar", async (req, res) => {
+  try {
     //desestructuro el nuevo producto
-    const { title,description,price,status,stock,category }=req.body;
+    const { title, description, price, status, stock, category } = req.body;
 
     if (!title || !description || !price || !stock || !category) {
       return res
@@ -68,70 +65,63 @@ viewsRoutes.post('/agregar', async (req,res)=>{
     }
 
     const newProduct = await productsModel.create({
-      id : Date.now(),
+      id: Date.now(),
       title,
       description,
-      price:parseFloat(price),
+      price: parseFloat(price),
       status,
-      stock :parseInt(stock, 10),
+      stock: parseInt(stock, 10),
       category,
-    })
+    });
 
     if (req.io) {
       req.io.emit("updatedProducts", await productsModel.find());
     } else {
-      console.error("Socket.IO no está disponible");
+      logger.ERROR("Socket.IO no está disponible");
     }
 
-
-    res.status(201).send({ message: "Producto agregado correctamente"});
-  }catch (error) {
-    console.error("Error al agregar producto:", error);
+    res.status(201).send({ message: "Producto agregado correctamente" });
+  } catch (error) {
+    logger.ERROR("Error al agregar producto:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
 
-viewsRoutes.post('/borrar', async (req,res)=>{
-  try{
+viewsRoutes.post("/borrar", async (req, res) => {
+  try {
     const { id } = req.body;
-    await productsModel.findOneAndDelete({_id: id});
-const productosActualizados = await productsModel.find();
-if (req.io) {
-  req.io.emit("updatedProducts", await productsModel.find());
-} else {
-  console.error("Socket.IO no está disponible");
-}
+    await productsModel.findOneAndDelete({ _id: id });
+    const productosActualizados = await productsModel.find();
+    if (req.io) {
+      req.io.emit("updatedProducts", await productsModel.find());
+    } else {
+      logger.ERROR("Socket.IO no está disponible");
+    }
     res.status(200).send({ message: "Producto eliminado correctamente" });
-  }catch (error) {
-    console.error("Error al eliminar producto:", error);
+  } catch (error) {
+    logger.ERROR("Error al eliminar producto:", error);
     res.status(500).send("Error interno del servidor");
   }
-  
-})
+});
 
 viewsRoutes.get("/cart/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
-    const cart = await cartsModel.findOne({_id: cid}).populate("products");
+    const cart = await cartsModel.findOne({ _id: cid }).populate("products");
 
     if (!cart) {
-      return res.status(404).send('Carrito no encontrado');
+      return res.status(404).send("Carrito no encontrado");
     }
 
-    res.render('cartDetail', { cart });
+    res.render("cartDetail", { cart });
   } catch (error) {
-    console.error("Error al obtener el carrito:", error);
+    logger.ERROR("Error al obtener el carrito:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
 
-
-viewsRoutes.get('/login', async( req,res )=>{
-  res.render('/templates/login')
-})
-
+viewsRoutes.get("/login", async (req, res) => {
+  res.render("/templates/login");
+});
 
 export default viewsRoutes;
-
-
-

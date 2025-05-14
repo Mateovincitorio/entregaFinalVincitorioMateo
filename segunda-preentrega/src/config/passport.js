@@ -6,6 +6,7 @@ import userModel from "../models/users.model.js";
 import GithubStrategy from 'passport-github2'
 import jwt from 'passport-jwt'
 import bcrypt from 'bcrypt'
+import logger from './logger.config.js';
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const cookieExtractor = (req) => {
     if (req && req.cookies) {
         token = req.cookies['coderSession'];
     } else {
-        console.log("No se encontraron cookies en la solicitud.");
+        logger.WARN("No se encontraron cookies en la solicitud.");
     }
 
     return token;
@@ -91,7 +92,7 @@ const initializatePassword = () =>{
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
-                    console.log("Perfil de GitHub recibido:", profile);
+                    logger.INFO("Perfil de GitHub recibido:", profile);
     
                     let email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
     

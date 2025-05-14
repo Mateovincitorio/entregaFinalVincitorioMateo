@@ -1,8 +1,10 @@
+import logger from "../../config/logger.config";
+
 document.addEventListener('DOMContentLoaded', () => {
     const formRegister = document.getElementById("registerForm");
 
     formRegister.addEventListener('submit', async (e) => {
-        console.log("Form enviado");
+        logger.INFO("Form enviado");
 
         try {
             e.preventDefault();
@@ -20,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-            console.log("Respuesta del servidor:", data);
+            logger.INFO("Respuesta del servidor:", data);
 
             const mensajeServidor = data?.message?.toLowerCase().trim();
-            console.log("Mensaje procesado:", mensajeServidor);
+            logger.INFO("Mensaje procesado:", mensajeServidor);
 
             if (mensajeServidor === "usuario registrado correctamente") {
-                console.log("Entró en el IF, ejecutando Toastify...");
+                
 
                 Toastify({
                     text: data.message,
@@ -41,14 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).showToast();
 
                 setTimeout(() => {
-                    console.log("Redirigiendo a login...");
+                    logger.INFO("Redirigiendo a login...");
                     window.location.href = "http://localhost:8080/api/sessions/viewlogin";
                 }, 3000);
             } else {
-                console.log("NO se cumplió la condición del mensaje.");
+                logger.ERROR("NO se cumplió la condición del mensaje.");
             }
         } catch (e) {
-            console.log("Error en el fetch:", e);
+            logger.ERROR("Error en el fetch:", e);
         }
     });
 });
