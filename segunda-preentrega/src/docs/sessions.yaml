@@ -1,0 +1,184 @@
+components:
+  schemas:
+    UserLoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+      example:
+        email: juan@example.com
+        password: 123456
+
+    UserRegisterInput:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - first_name
+        - email
+        - password
+      example:
+        first_name: Juan
+        last_name: Pérez
+        email: juan@example.com
+        password: 123456
+
+    UserResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        rol:
+          type: string
+        first_name:
+          type: string
+      example:
+        email: juan@example.com
+        rol: user
+        first_name: Juan
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: usuario logueado correctamente
+
+paths:
+  /api/sessions/login:
+    post:
+      summary: Iniciar sesión de usuario
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginInput"
+      responses:
+        "200":
+          description: Usuario logueado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "500":
+          description: Error en el servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /api/sessions/register:
+    post:
+      summary: Registrar nuevo usuario
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegisterInput"
+      responses:
+        "200":
+          description: Usuario registrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Datos incompletos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "500":
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /api/sessions/github:
+    get:
+      summary: Iniciar sesión con GitHub
+      tags:
+        - Sessions
+      responses:
+        "302":
+          description: Redirección a GitHub para autenticación
+
+  /api/sessions/githubcallback:
+    get:
+      summary: Callback de GitHub OAuth
+      tags:
+        - Sessions
+      responses:
+        "200":
+          description: Usuario autenticado correctamente con GitHub
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "302":
+          description: Redirección al login en caso de error
+
+  /api/sessions/current:
+    get:
+      summary: Obtener usuario actual autenticado (token JWT)
+      tags:
+        - Sessions
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Usuario autenticado actualmente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /api/sessions/viewlogin:
+    get:
+      summary: Renderiza la vista de login de usuarios
+      tags:
+        - Sessions
+      responses:
+        "200":
+          description: Página de login renderizada correctamente
+
+  /api/sessions/viewregister:
+    get:
+      summary: Renderiza la vista de registro de usuarios
+      tags:
+        - Sessions
+      responses:
+        "200":
+          description: Página de registro renderizada correctamente

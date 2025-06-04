@@ -66,7 +66,7 @@ export const deleteUsers =
     try {
       const uid = req.params.uid;
       const user = await userModel.findByIdAndDelete(uid);
-      res.send(`usuario con id "${user?.id}" eliminado`, user);
+      res.status(200).send(`usuario con id "${user?.id}" eliminado`, user);
     } catch (error) {
       logger.ERROR(error);
     }

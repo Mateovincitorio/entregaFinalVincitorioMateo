@@ -1,8 +1,9 @@
 import express from "express";
 import path from "path";
-import env from "./helpers/env.js";
 import cluster from "cluster";
 import { cpus } from "os";
+import { serve, setup } from "swagger-ui-express";
+import swaggerSpecs from "./helpers/swagger.helper.js";
 import productsRoutes from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import { Server } from "socket.io";
@@ -78,6 +79,7 @@ if (isPrimary) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(winstonMid);
+app.use("/api/docs", serve, setup(swaggerSpecs));
 
 // Session Middleware
 app.use(

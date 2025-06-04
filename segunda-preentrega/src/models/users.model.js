@@ -6,11 +6,9 @@ import logger from "../config/logger.config.js";
 const userSchema = new Schema({
   first_name: {
     type: String,
-    required: true,
   },
   last_name: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
@@ -23,7 +21,6 @@ const userSchema = new Schema({
   },
   age: {
     type: Number,
-    required: true,
   },
   rol: {
     type: String,

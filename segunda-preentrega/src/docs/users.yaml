@@ -1,0 +1,175 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        first_name:
+          description: nombre del usuario
+          type: string
+        last_name:
+          description: apellido del usuario
+          type: string
+        email:
+          description: email del usuario
+          type: string
+        password:
+          description: password del usuario
+          type: string
+        age:
+          description: edad del usuario
+          type: number
+        rol:
+          description: rol del usuario
+          type: string
+        cart:
+          description: cart del usuario
+          type: string
+      example:
+        first_name: mateo
+        last_name: vincitorio
+        email: mma@gmail.com
+        password: kkkso0
+        age: 33
+        rol: User
+        cart: "33o00002"
+
+  responses:
+    400:
+      type: object
+      properties:
+        url:
+          description: ruta a la cual se realiza la solicitud
+          type: string
+        method:
+          description: metodo con el cual se realiza la solicitud
+          type: string
+        response:
+          description: mensaje de error
+          type: string
+      example:
+        method: post
+        error: invalid data
+        url: /api/sessions/login
+
+    401:
+      type: object
+      properties:
+        url:
+          description: ruta a la cual se realiza la solicitud
+          type: string
+        method:
+          description: metodo con el cual se realiza la solicitud
+          type: string
+        response:
+          description: mensaje de error
+          type: string
+      example:
+        method: post
+        error: invalid credentials
+        url: /api/sessions/login
+
+    403:
+      type: object
+      properties:
+        url:
+          description: ruta a la cual se realiza la solicitud
+          type: string
+        method:
+          description: metodo con el cual se realiza la solicitud
+          type: string
+        response:
+          description: mensaje de error
+          type: string
+      example:
+        method: post
+        error: forbidden
+        url: /api/sessions/login
+
+    500:
+      type: object
+      properties:
+        url:
+          description: ruta a la cual se realiza la solicitud
+          type: string
+        method:
+          description: metodo con el cual se realiza la solicitud
+          type: string
+        response:
+          description: mensaje de error
+          type: string
+      example:
+        method: post
+        error: fatal error
+        url: /api/sessions/login
+
+paths:
+  /api/sessions/login:
+    post:
+      summary: inicia la sesión de un usuario, guardando el token en una cookie
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: email del usuario
+                  type: string
+                password:
+                  description: password del usuario
+                  type: string
+              example:
+                email: papa@gmail.com
+                password: papa
+      responses:
+        200:
+          description: usuario logueado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    description: ruta a la cual se realiza la solicitud
+                    type: string
+                  method:
+                    description: método con el cual se realiza la solicitud
+                    type: string
+                  response:
+                    description: mensaje de éxito
+                    type: string
+                example:
+                  method: post
+                  url: /api/sessions/login
+                  response: usuario logueado correctamente
+
+        400:
+          description: falta de algún dato
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/400"
+
+        401:
+          description: credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/401"
+
+        403:
+          description: acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/403"
+
+        500:
+          description: error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/500"

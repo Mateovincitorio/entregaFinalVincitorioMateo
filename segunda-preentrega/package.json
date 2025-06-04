@@ -9,12 +9,14 @@
     "dev": "nodemon src/app.js --mode=dev",
     "test": "node src/app.js --mode=test",
     "build-image-preEntrega": "docker build -t preentrega-1 .",
-    "run-image-preEntrega":"docker run -p 8080:9000 preentrega-1",
+    "run-image-preEntrega": "docker run -p 8080:9000 preentrega-1",
     "build-image": "docker build -t codercommerce70435 .",
-    "run-image":"docker run -p 8080:9000 codercommerce70435",
+    "run-image": "docker run -p 8080:9000 codercommerce70435",
     "retag-image": "docker tag codercommerce70435 matukeitor/codercommerce:1.0.0",
-    "retag-image-preEntrega":"docker tag preentrega-1 matukeitor/preentrega-backend-1:1.0.0",
-    "push-image": "docker push matukeitor/preentrega-backend-1:1.0.0"
+    "retag-image-preEntrega": "docker tag preentrega-1 matukeitor/preentrega-backend-1:1.0.0",
+    "push-image": "docker push matukeitor/preentrega-backend-1:1.0.0",
+    "mocha": "mocha \"src/test/**/*.test.js\"",
+    "super": "mocha ./src/test/supertest"
   },
   "author": "",
   "license": "ISC",
@@ -38,11 +40,18 @@
     "passport-local": "^1.0.0",
     "session-file-store": "^1.5.0",
     "socket.io": "^4.8.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "sweetalert2": "^11.15.10",
     "uuid": "^9.0.1",
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.7.0"
+    "@faker-js/faker": "^9.7.0",
+    "chai": "^5.2.0",
+    "mocha": "^11.5.0",
+    "sinon": "^20.0.0",
+    "sinon-chai": "^4.0.0",
+    "supertest": "^7.1.1"
   }
 }

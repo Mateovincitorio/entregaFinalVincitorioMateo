@@ -1,0 +1,343 @@
+components:
+  schemas:
+    CartProduct:
+      type: object
+      properties:
+        id_prod:
+          type: string
+          description: ID del producto (referencia a products)
+        quantity:
+          type: integer
+          description: Cantidad del producto en el carrito
+      example:
+        id_prod: "643f1a2b3c4d5e6f7a8b9c0d"
+        quantity: 2
+
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del carrito
+        products:
+          type: array
+          description: Lista de productos en el carrito
+          items:
+            $ref: "#/components/schemas/CartProduct"
+      example:
+        _id: "643f1a2b3c4d5e6f7a8b9c0c"
+        products:
+          - id_prod: "643f1a2b3c4d5e6f7a8b9c0d"
+            quantity: 3
+          - id_prod: "643f1a2b3c4d5e6f7a8b9c0e"
+            quantity: 1
+
+  responses:
+    400:
+      description: Petición incorrecta
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              response:
+                type: string
+              url:
+                type: string
+            example:
+              method: post
+              response: invalid data
+              url: /api/carts/123/products/456
+
+    401:
+      description: No autorizado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              response:
+                type: string
+              url:
+                type: string
+            example:
+              method: get
+              response: unauthorized
+              url: /api/carts/123
+
+    403:
+      description: Prohibido
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              response:
+                type: string
+              url:
+                type: string
+            example:
+              method: delete
+              response: forbidden
+              url: /api/carts/123/products/456
+
+    404:
+      description: No encontrado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              response:
+                type: string
+            example:
+              response: Carrito no existe
+
+    500:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              response:
+                type: string
+              url:
+                type: string
+            example:
+              method: post
+              response: fatal error
+              url: /api/carts/123
+
+paths:
+  /api/carts/{cid}:
+    get:
+      summary: Obtener un carrito por ID
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+      responses:
+        "200":
+          description: Carrito obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+
+    delete:
+      summary: Vaciar todos los productos del carrito
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+      responses:
+        "200":
+          description: Todos los productos del carrito eliminados
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Todos los productos del carrito han sido eliminados
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+
+  /api/carts:
+    post:
+      summary: Crear un nuevo carrito vacío
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      responses:
+        "201":
+          description: Carrito creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Carrito creado correctamente
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "500":
+          $ref: "#/components/responses/500"
+
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Insertar o actualizar cantidad de un producto en el carrito
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del producto a agregar o actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: Cantidad del producto a insertar o actualizar
+              example:
+                quantity: 3
+      responses:
+        "200":
+          description: Carrito actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Carrito actualizado correctamente
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          description: Carrito o producto no existe
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Carrito no existe
+        "500":
+          $ref: "#/components/responses/500"
+
+    delete:
+      summary: Eliminar un producto específico del carrito
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del producto a eliminar
+      responses:
+        "200":
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Producto eliminado correctamente
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          description: Carrito o producto no existe
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Producto no existe
+        "500":
+          $ref: "#/components/responses/500"
+
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Procesar compra (checkout) del carrito
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del carrito a comprar
+      responses:
+        "200":
+          description: Compra procesada con éxito, ticket generado
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Ticket generado
+        "400":
+          description: Productos sin stock eliminados del carrito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example: ["643f1a2b3c4d5e6f7a8b9c0d"]
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          description: Carrito no existe
+          content:
+            application/json:
+              schema:
+                type: string
+              example: carrito no existe
+        "500":
+          $ref: "#/components/responses/500"

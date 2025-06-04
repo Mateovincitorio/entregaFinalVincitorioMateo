@@ -1,0 +1,276 @@
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          description: Título del producto
+          type: string
+        description:
+          description: Descripción del producto
+          type: string
+        code:
+          description: Código de identificación del producto
+          type: number
+        price:
+          description: Precio del producto
+          type: number
+        status:
+          description: Estado del producto
+          type: boolean
+        stock:
+          description: Stock del producto
+          type: number
+        category:
+          description: Categoría del producto
+          type: string
+        thumbnail:
+          description: Foto pequeña descriptiva del producto
+          type: array
+          items:
+            type: string
+      example:
+        title: producto 1
+        description: descripcion del prod 1
+        code: 900
+        price: 800
+        status: true
+        stock: 90
+        category: categoria del pro 1
+        thumbnail:
+          - foto del prod 1
+
+  responses:
+    400:
+      description: Falta de algún dato
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              error:
+                type: string
+              url:
+                type: string
+            example:
+              method: post
+              error: datos inválidos o incompletos
+              url: /api/products
+
+    401:
+      description: No autorizado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              error:
+                type: string
+              url:
+                type: string
+            example:
+              method: post
+              error: usuario no autenticado
+              url: /api/products
+
+    403:
+      description: Prohibido
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              error:
+                type: string
+              url:
+                type: string
+            example:
+              method: delete
+              error: acceso denegado
+              url: /api/products/{id}
+
+    500:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              method:
+                type: string
+              error:
+                type: string
+              url:
+                type: string
+            example:
+              method: get
+              error: error del servidor
+              url: /api/products
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+
+paths:
+  /api/products:
+    get:
+      summary: Ver los datos de varios productos (puede incluir filtros)
+      tags:
+        - Product
+      responses:
+        "200":
+          description: Lista de productos obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "500":
+          $ref: "#/components/responses/500"
+
+    post:
+      summary: Crea un producto en la base de datos
+      tags:
+        - Product
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto creado correctamente
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+
+  /api/products/{id}:
+    get:
+      summary: Ver los datos de un producto específico
+      tags:
+        - Product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+
+    put:
+      summary: Actualiza un producto específico
+      tags:
+        - Product
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                status:
+                  type: boolean
+                category:
+                  type: string
+              example:
+                title: producto 1
+                description: descripcion del prod 1
+                price: 800
+                status: true
+                category: categoria del pro 1
+      responses:
+        "200":
+          description: Producto actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto actualizado correctamente
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "500":
+          $ref: "#/components/responses/500"
+
+    delete:
+      summary: Elimina un producto específico
+      tags:
+        - Product
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto eliminado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Producto eliminado correctamente
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "500":
+          $ref: "#/components/responses/500"

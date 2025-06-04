@@ -38,7 +38,7 @@ export const getProduct = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { title, description, category, code, price, stock } = req.body;
+    const { title, description, category, code, price, stock } = req.body || {};
 
     const newProduct = await productsModel.create({
       title,
@@ -48,7 +48,8 @@ export const createProduct = async (req, res) => {
       stock,
       code,
     });
-    res.send(newProduct);
+
+    res.status(201).send(newProduct);
   } catch (error) {
     res.status(500).send(error);
   }
