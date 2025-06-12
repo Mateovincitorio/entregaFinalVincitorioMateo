@@ -1,35 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto  } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import * as crypto from "crypto"
+import { InjectModel } from '@nestjs/mongoose';
+import { UserType, UserSchema } from './users.model';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-  users: Array<User>;
-  constructor() {
-    this.users = [];
-  }
-  create(data: User): string {
-    data._id = crypto.randomBytes(12).toString("hex")
-    data.rol = data.rol ?? "User"
-    this.users.push(data)
-    return data._id
+  constructor(@InjectModel('User') private UserModel: Model<UserType>) {}
+
+  async create(data: User): Promise<Types.ObjectId> {
+    const one = await this.UserModel.create(data);
+    return one._id;
   }
 
-  findAll() {
-   return this.users;
+  async findAll() {
+    const all = await this.UserModel.find();
+    return all;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: String) {
+    const one = await this.UserModel.findById(id);
+    return one;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateById(id: String, updateUserDto: UpdateUserDto) {
+    const one = await this.UserModel.findByIdAndUpdate(id, updateUserDto);
+    return one;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async removeById(id: String) {
+    const one = await this.UserModel.findById(id);
+    return one;
   }
 }

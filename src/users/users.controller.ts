@@ -1,48 +1,86 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { UserType } from './users.model';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() data: User) {
+  async create(@Body() data: User) {
     try {
-      return this.usersService.create(data)
+      const user = await this.usersService.create(data);
+      if (!user) {
+        throw new HttpException('not created', 400);
+      }
+      return 'usuario creado ' + user;
     } catch (error) {
-      throw new HttpException(error.message, error.status)
+      throw new HttpException(error.message, error.status);
     }
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     try {
-      const users : Array<User> = this.usersService.findAll()
-      if(users.length===0){
-        throw new HttpException("not found", 404)
+      const users = await this.usersService.findAll();
+      if (users.length === 0) {
+        throw new HttpException('not found', 404);
       }
-      return users
+      return users;
     } catch (error) {
-      throw new HttpException(error.message, error.status)
-      
+      throw new HttpException(error.message, error.status);
     }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      const user = await this.usersService.findById(id);
+      if (!user) {
+        throw new HttpException('not found', 404);
+      }
+      return user;
+    } catch (error) {
+      throw new HttpException('not found', 404);
+    }
+    return await this.usersService.findById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.usersService.updateById(id, updateUserDto);
+      if (!user) {
+        throw new HttpException('not found', 404);
+      }
+      return user;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      const user = await this.usersService.removeById(id);
+      if (!user) {
+        throw new HttpException('not found', 404);
+      }
+      return user;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 }
