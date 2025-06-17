@@ -32,14 +32,13 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.post("save", async function (userCreated) {
+userSchema.post("save", async function () {
   try {
-    const newCart = await cartsModel.create({ products: [] }); // Crea un nuevo carrito
-    await model("users").findByIdAndUpdate(userCreated._id, {
-      cart: newCart._id,
-    }); // Actualiza el usuario con el nuevo carrito
+    const newCart = await cartsModel.create({ products: [] });
+    this.cart = newCart._id;
+    await this.save(); // Actualiza el usuario con el nuevo carrito
   } catch (error) {
-    logger.ERROR(error);
+    logger.ERROR("Error en post-save de usuario:", error.message);
   }
 });
 

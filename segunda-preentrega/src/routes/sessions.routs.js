@@ -10,8 +10,30 @@ import {
 
 const sessionsRouter = Router();
 
-sessionsRouter.post("/register", passport.authenticate("register"), register);
-sessionsRouter.post("/login", passport.authenticate("login"), login);
+sessionsRouter.post("/register", (req, res, next) => {
+  passport.authenticate("register", { session: false }, (err, user, info) => {
+    if (err) return next(err);
+    if (!user)
+      return res
+        .status(400)
+        .json({ error: info?.message || "Registro fallido" });
+
+    req.user = user;
+    return register(req, res);
+  })(req, res, next);
+});
+
+sessionsRouter.post("/login", (req, res, next) => {
+  passport.authenticate("login", { session: false }, (err, user, info) => {
+    if (err) return next(err);
+    if (!user)
+      return res.status(401).json({ error: info?.message || "Login fallido" });
+
+    req.user = user;
+    return login(req, res);
+  })(req, res, next);
+});
+
 sessionsRouter.get(
   "/github",
   passport.authenticate("github", { scope: ["user:email"] })

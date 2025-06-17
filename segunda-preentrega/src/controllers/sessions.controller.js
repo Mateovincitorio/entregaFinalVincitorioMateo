@@ -5,34 +5,35 @@ import { generateToken } from "../utils/jwt.js";
 
 export const login = async (req, res) => {
   try {
-    if (!req.user)
+    if (!req.user) {
       return res
         .status(400)
-        .json({ message: "usuario o contraseña no valida" });
-    //sesion de BDD
-    req.session.user = {
-      email: req.user.email,
-      rol: req.user.rol,
-      first_name: req.user.first_name,
-    };
+        .json({ message: "usuario o contraseña no válida" });
+    }
 
-    //retorna un token de jwt
+    const token = generateToken(req.user);
+
+    // Podés setear la cookie con el token JWT aquí
     return res
       .status(200)
-      .cookie("coderSession", generateToken(req.user), {
+      .cookie("coderSession", token, {
         httpOnly: true,
-        secure: false, //evita errores en https
-        maxAge: 8640000, //un dia en segundos
+        secure: false,
+        maxAge: 86400000, // 1 día
       })
-      .json({ message: "usuario logueado correctamente" });
+      .json({
+        message: "usuario logueado correctamente",
+        token,
+        payload: req.user,
+      });
   } catch (error) {
-    logger.ERROR("Error en el login:", error);
     return res.status(500).json({ message: "Error en el servidor" });
   }
 };
 
 export const register = async (req, res) => {
   try {
+    console.log("LLEGÓ AL REGISTER", req.body);
     const { first_name, last_name, email, age, password } = req.body;
 
     if (!email || !password) {
@@ -44,7 +45,7 @@ export const register = async (req, res) => {
     const existingUser = await userModel.findOne({ email });
 
     if (existingUser) {
-      return res.status(409).json({ message: "El usuario ya está registrado" });
+      return res.status(401).json({ message: "El usuario ya está registrado" });
     }
 
     const hashedPassword = hashPassword(password);

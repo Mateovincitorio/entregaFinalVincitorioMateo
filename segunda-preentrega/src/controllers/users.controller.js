@@ -28,6 +28,12 @@ export const getUser =
 export const postUsers = async (req, res) => {
   try {
     const { first_name, last_name, email, password, age } = req.body;
+
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(401).json({ message: "Usuario ya existente" });
+    }
+
     const user = await userModel.create({
       first_name,
       last_name,
@@ -35,9 +41,14 @@ export const postUsers = async (req, res) => {
       password,
       age,
     });
-    res.send(`Usuario creado con el id: ${user?.id}`);
+
+    return res.status(201).json({
+      message: `Usuario creado con el id: ${user?.id}`,
+      payload: user,
+    });
   } catch (error) {
     logger.ERROR(error);
+    return res.status(500).json({ error: error.message });
   }
 };
 

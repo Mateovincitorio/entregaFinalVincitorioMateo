@@ -19,7 +19,7 @@ export const getProducts = async (req, res) => {
       number: i + 1,
       isCurrent: i + 1 === prods.page,
     }));
-    res.send(prods);
+    res.status(200).send(prods);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -40,6 +40,18 @@ export const createProduct = async (req, res) => {
   try {
     const { title, description, category, code, price, stock } = req.body || {};
 
+    // Validación básica de campos requeridos
+    if (
+      !title?.trim() ||
+      !description?.trim() ||
+      !category?.trim() ||
+      !code ||
+      typeof price !== "number" ||
+      typeof stock !== "number"
+    ) {
+      return res.status(400).send({ error: "Datos inválidos" });
+    }
+
     const newProduct = await productsModel.create({
       title,
       description,
@@ -51,7 +63,7 @@ export const createProduct = async (req, res) => {
 
     res.status(201).send(newProduct);
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).send({ error: error.message });
   }
 };
 
@@ -73,7 +85,7 @@ export const deleteProduct = async (req, res) => {
     const updateProd = req.body;
     const rta = await productsModel.findByIdAndDelete(pid);
     if (rta) res.send("producto eliminado correctamente");
-    elseres.send("prod no existe");
+    else res.send("prod no existe");
   } catch (error) {
     res.status(500).send(error);
   }
