@@ -27,28 +27,30 @@ export const getUser =
 
 export const postUsers = async (req, res) => {
   try {
-    const { first_name, last_name, email, password, age } = req.body;
+    const { first_name, last_name, email, password, age, rol } = req.body;
 
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.status(401).json({ message: "Usuario ya existente" });
     }
 
+    // Creamos el carrito vacío primero
+    const newCart = await cartsModel.create({ products: [] });
+
+    // Creamos el usuario con la referencia al carrito
     const user = await userModel.create({
       first_name,
       last_name,
       email,
       password,
       age,
+      rol, // ✅ asegurate de desestructurarlo
+      cart: newCart._id,
     });
 
-    return res.status(201).json({
-      message: `Usuario creado con el id: ${user?.id}`,
-      payload: user,
-    });
+    return res.status(201).json({ message: "Usuario creado", user });
   } catch (error) {
-    logger.ERROR(error);
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: "Error del servidor", error });
   }
 };
 

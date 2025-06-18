@@ -33,34 +33,29 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    console.log("LLEGÓ AL REGISTER", req.body);
-    const { first_name, last_name, email, age, password } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res
         .status(400)
-        .json({ message: "Email y contraseña son obligatorios" });
+        .json({ error: "Email y contraseña son obligatorios" });
     }
 
-    const existingUser = await userModel.findOne({ email });
-
-    if (existingUser) {
-      return res.status(401).json({ message: "El usuario ya está registrado" });
+    const exists = await userModel.findOne({ email });
+    if (exists) {
+      return res.status(400).json({ error: "Usuario ya existente" });
     }
 
-    const hashedPassword = hashPassword(password);
+    const hashedPassword = await createHash(password);
+
     const newUser = await userModel.create({
-      first_name,
-      last_name,
       email,
-      age,
       password: hashedPassword,
     });
 
-    return res
-      .status(201)
-      .json({ message: "Usuario registrado correctamente", user: newUser });
+    res.status(201).json(newUser);
   } catch (error) {
+    logger.ERROR("Error en registro:", error.message);
     res
       .status(500)
       .json({ message: "Error del servidor", error: error.message });
