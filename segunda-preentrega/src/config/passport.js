@@ -7,6 +7,8 @@ import GithubStrategy from "passport-github2";
 import jwt from "passport-jwt";
 import bcrypt from "bcrypt";
 import logger from "./logger.config.js";
+import cartsModel from "../models/cart.model.js";
+import { ExtractJwt } from "passport-jwt";
 
 dotenv.config();
 
@@ -47,6 +49,7 @@ const initializatePassword = () => {
             email,
             password: plainPassword,
             age,
+            rol,
           } = req.body;
 
           const newUser = await userModel.create({
@@ -55,7 +58,11 @@ const initializatePassword = () => {
             email,
             password: hashPassword(plainPassword),
             age,
+            rol,
           });
+          const newCart = await cartsModel.create({ products: [] });
+
+          await userModel.findByIdAndUpdate(newUser._id, { cart: newCart._id });
 
           return done(null, newUser);
         } catch (error) {
@@ -141,7 +148,10 @@ const initializatePassword = () => {
     "jwt",
     new JWTStrategy(
       {
-        jwtFromRequest: extractJWT.fromExtractors([cookieExtractor]),
+        jwtFromRequest: ExtractJwt.fromExtractors([
+          cookieExtractor,
+          ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ]),
         secretOrKey: process.env.SECRETKEY,
       },
       async (jwt_payload, done) => {
@@ -149,26 +159,18 @@ const initializatePassword = () => {
           return done(null, jwt_payload);
         } catch (error) {
           return done(error);
-        } //consulto mi cookie y ya la puedo implementar
+        }
       }
     )
-  ); //quiere decir que mi token lo saco de mi cookie extractor
-
-  //PASOS NECESARIOS PARA GENERAR UNA SESION Y MANEJARNOS VIA HTTP
+  );
 
   passport.serializeUser((user, done) => {
-    if (!user || !user._id) {
-      return done(new Error("Usuario inválido"));
-    }
     done(null, user._id);
   });
 
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await userModel.findById(id);
-      if (!user) {
-        return done(new Error("Usuario no encontrado"));
-      }
       done(null, user);
     } catch (error) {
       done(error);

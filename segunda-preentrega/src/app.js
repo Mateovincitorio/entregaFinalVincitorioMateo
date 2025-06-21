@@ -1,3 +1,4 @@
+import "./helpers/env.js";
 import express from "express";
 import path from "path";
 import cluster from "cluster";
@@ -116,4 +117,3 @@ app.use("*", (req, res) => {
 });
 
 dbConnect(process.env.MONGO_URI);
-//console.log(process.argv);

@@ -88,3 +88,46 @@
 [31mERROR[39m: Error en post-save de usuario:
 [31mERROR[39m: Error en post-save de usuario:
 [31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en registro:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en registro:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: undefined {"code":"ERR_HTTP_INVALID_STATUS_CODE"}
+[31mERROR[39m: Error en post-save de usuario:
+[31mERROR[39m: undefined {"code":11000,"errorLabelSet":{},"errorResponse":{"code":11000,"errmsg":"E11000 duplicate key error collection: codertest.products index: code_1 dup key: { code: 2880 }","index":0,"keyPattern":{"code":1},"keyValue":{"code":2880}},"index":0,"keyPattern":{"code":1},"keyValue":{"code":2880}}

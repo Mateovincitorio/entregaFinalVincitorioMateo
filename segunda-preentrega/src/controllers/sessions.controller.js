@@ -33,27 +33,7 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Email y contraseña son obligatorios" });
-    }
-
-    const exists = await userModel.findOne({ email });
-    if (exists) {
-      return res.status(400).json({ error: "Usuario ya existente" });
-    }
-
-    const hashedPassword = await createHash(password);
-
-    const newUser = await userModel.create({
-      email,
-      password: hashedPassword,
-    });
-
-    res.status(201).json(newUser);
+    res.status(201).json(req.user);
   } catch (error) {
     logger.ERROR("Error en registro:", error.message);
     res

@@ -12,12 +12,25 @@ export const getCart = async (req, res) => {
   }
 };
 
-export const createCart = async (req, res) => {
+/*export const createCart = async (req, res) => {
   try {
-    await cartModel.create({ products: [] });
-    res.status(201).send("Carrito creado correctamente");
+    res.status(201).json({ message: "Carrito creado correctamente" });
   } catch (e) {
     res.status(500).send(e);
+  }
+};*/
+
+export const createCart = async (req, res) => {
+  try {
+    console.log("↪ Entró a createCart");
+    const newCart = await cartModel.create({ products: [] });
+    console.log("🛒 Carrito creado:", newCart);
+    res
+      .status(201)
+      .send({ message: "Carrito creado correctamente", cart: newCart });
+  } catch (e) {
+    console.error("❌ Error al crear carrito:", e.message);
+    res.status(500).send({ error: e.message });
   }
 };
 
@@ -32,9 +45,8 @@ export const insertProductCart = async (req, res) => {
     if (cart) {
       const indice = cart.products.findIndex((prod) => prod._id == productId);
 
-      if (indice != -1)
-        cart.products[indice].quantity =
-          quantity; //Si el producto existe, modifico la cantidad
+      if (indice != -1) cart.products[indice].quantity = quantity;
+      //Si el producto existe, modifico la cantidad
       else cart.products.push({ id_prod: productId, quantity: quantity });
 
       await cartModel.findByIdAndUpdate(cartId, cart);
@@ -58,7 +70,7 @@ export const deleteProductCart = async (req, res) => {
 
       if (indice != -1) {
         cart.products.splice(indice, 1);
-        cart.save(); //await cartModel.findByIdAndUpdate(cartId, cart)
+        cart.save();
         return res.status(200).send("Producto eliminado correctamente");
       } else {
         return res.status(404).send("Producto no existe");
@@ -94,7 +106,7 @@ export const checkOut = async (req, res) => {
     const cartId = req.params.cid;
     const cart = await cartModel.findById(cartId);
     const prodSinStock = [];
-    //console.log( "cart  "+cart );
+    //( "cart  "+cart );
 
     if (cart) {
       //verifico que todos los prod tienen stock suficiente

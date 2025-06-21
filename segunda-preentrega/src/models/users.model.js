@@ -32,16 +32,4 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
-  try {
-    if (!this.cart) {
-      const newCart = await cartsModel.create({ products: [] });
-      this.cart = newCart._id;
-    }
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
 export default model("users", userSchema);

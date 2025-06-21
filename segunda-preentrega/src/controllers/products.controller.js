@@ -63,7 +63,13 @@ export const createProduct = async (req, res) => {
 
     res.status(201).send(newProduct);
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error("Error creando producto:", error);
+    res
+      .status(500)
+      .json({
+        error: "Error interno al crear producto",
+        details: error.message,
+      });
   }
 };
 

@@ -73,14 +73,18 @@ export const putUser =
     }
   });
 
-export const deleteUsers =
-  ("/:uid",
-  async (req, res) => {
-    try {
-      const uid = req.params.uid;
-      const user = await userModel.findByIdAndDelete(uid);
-      res.status(200).send(`usuario con id "${user?.id}" eliminado`, user);
-    } catch (error) {
-      logger.ERROR(error);
+export const deleteUsers = async (req, res) => {
+  try {
+    const uid = req.params.uid;
+    const user = await userModel.findByIdAndDelete(uid);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
-  });
+
+    res.status(200).json({ message: "Usuario eliminado" });
+  } catch (error) {
+    logger.ERROR(error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+};

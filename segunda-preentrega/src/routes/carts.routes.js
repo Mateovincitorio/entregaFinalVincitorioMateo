@@ -20,10 +20,11 @@ cartsRouter.get(
 );
 cartsRouter.post(
   "/",
-  passport.authenticate("jwt"),
+  passport.authenticate("jwt", { session: false }),
   authorization("Usuario"),
   createCart
 );
+
 cartsRouter.post(
   "/:cid/products/:pid",
   passport.authenticate("jwt"),
